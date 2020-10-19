@@ -11,4 +11,5 @@
                  [org.clojure/data.json "1.0.0"]
                  [ring/ring-json "0.5.0"]]
   :repl-options {:init-ns webapp.core}
-  :main webapp.core)
+  :main webapp.core
+  :uberjar-name "webapp.jar")

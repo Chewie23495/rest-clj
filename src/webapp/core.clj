@@ -33,8 +33,8 @@
   (ring-json/wrap-json-response handler))
 
 
-(defn -main []
-  (jetty/run-jetty app {:port 8080}))
+(defn -main [port]
+  (jetty/run-jetty app {:port (Integer. port)}))
 
 
 
