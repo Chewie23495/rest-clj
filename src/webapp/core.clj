@@ -45,7 +45,7 @@
 
 (def app
   (-> handler
-      (ring-json/wrap-json-response)
+      ring-json/wrap-json-response
       (wrap-cors
         :access-control-allow-origin [#".*"]
         :access-control-allow-methods [:post])))
