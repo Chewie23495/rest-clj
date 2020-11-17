@@ -30,24 +30,16 @@
                         (+ acc (mod count 10))))))
 
 (defn handler [request]
-  (if (= "application/json" (-> request
-                                (get :content-type)))
     (response/response {:result (-> request
                                     (body-json-handler)
                                     (get-values)
                                     (as-> values
                                           (reduce + values))
-                                    (sum-digits))})
-    (response/response {:error (format "Content-Typ %s" (-> request
-                                                            (get :content-type)))})))
+                                    (sum-digits))}))
 
 
 (def app
-  (-> handler
-      ring-json/wrap-json-response
-      (wrap-cors
-        :access-control-allow-origin [#".*"]
-        :access-control-allow-methods [:post])))
+  (ring-json/wrap-json-response handler))
 
 
 (defn -main [port]
