@@ -8,6 +8,13 @@
             [ring.middleware.cors :refer [wrap-cors]])
   (:gen-class))
 
+#_(def request-schema
+     {:address
+           {:colorKeys [s/Str]
+            :values [s/Num]}
+      :meta {:digits s/Num
+             :processingPattern s/Str}})
+
 
 (defn body-json-handler [request]
   (ring-json/json-body-request request {:keywords? true :bigdecimals? false}))
@@ -27,7 +34,6 @@
                                 (get :content-type)))
     (response/response {:result (-> request
                                     (body-json-handler)
-                                    (body-map)
                                     (get-values)
                                     (as-> values
                                           (reduce + values))
