@@ -20,7 +20,7 @@
   (ring-json/json-body-request request {:keywords? true :bigdecimals? false}))
 
 (defn get-values [request]
-  (-> request :address :values))
+  (-> request :body :address :values))
 
 (defn sum-digits [n]
   (loop [count n acc 0]
