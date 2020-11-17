@@ -1,20 +1,25 @@
 (ns webapp.core
   (:require [ring.util.response :as response]
             [ring.middleware.json :as ring-json]
-            [ring.adapter.jetty :as jetty])
+            [ring.adapter.jetty :as jetty]
+            [schema.core :as s :include-macros true]
+            [schema.coerce :as coerce]
+            [schema.utils :as s-utils]
+            [ring.middleware.cors :refer [wrap-cors]])
   (:gen-class))
+(def request-schema
+   {:address
+         {:colorKeys [s/Str]
+          :values [s/Num]}
+    :meta {:digits s/Num
+           :processingPattern s/Str}})
 
-
-(def result-map (atom {:result "value"}))
 
 (defn body-json-handler [request]
   (ring-json/json-body-request request {:keywords? true :bigdecimals? false}))
 
 (defn get-values [request]
-  (:values(:address(:body request))))
-
-(defn sum-values [vector]
-  (reduce + vector))
+  (-> request :address :values))
 
 (defn sum-digits [n]
   (loop [count n acc 0]
@@ -24,13 +29,26 @@
                         (+ acc (mod count 10))))))
 
 (defn handler [request]
-  (response/response (swap! result-map assoc :result(sum-digits
-                                                      (sum-values
-                                                        (get-values
-                                                          (body-json-handler request)))))))
+  (if (= "application/json" (-> request
+                                (get :content-type)))
+    (response/response {:result (-> request
+                                    (body-json-handler)
+                                    (as-> body-map
+                                          (s/validate request-schema (get body-map :body)))
+                                    (get-values)
+                                    (as-> values
+                                          (reduce + values))
+                                    (sum-digits))})
+    (response/response {:error (format "Content-Typ %s" (-> request
+                                                            (get :content-type)))})))
+
 
 (def app
-  (ring-json/wrap-json-response handler))
+  (-> handler
+      (ring-json/wrap-json-response)
+      (wrap-cors
+        :access-control-allow-origin [#".*"]
+        :access-control-allow-methods [:post])))
 
 
 (defn -main [port]

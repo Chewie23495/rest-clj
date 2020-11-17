@@ -5,11 +5,12 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :min-lein-version "2.3.4"
   :dependencies [[org.clojure/clojure "1.10.1"]
-                 [http-kit "2.5.0"]
                  [compojure "1.6.2"]
                  [ring "1.7.0"]
                  [org.clojure/data.json "1.0.0"]
-                 [ring/ring-json "0.5.0"]]
+                 [ring/ring-json "0.5.0"]
+                 [prismatic/schema "1.1.12"]
+                 [ring-cors "0.1.13"]]
   :repl-options {:init-ns webapp.core}
   :main webapp.core
   :uberjar-name "webapp.jar")
