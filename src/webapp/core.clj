@@ -7,12 +7,6 @@
             [schema.utils :as s-utils]
             [ring.middleware.cors :refer [wrap-cors]])
   (:gen-class))
-(def request-schema
-   {:address
-         {:colorKeys [s/Str]
-          :values [s/Num]}
-    :meta {:digits s/Num
-           :processingPattern s/Str}})
 
 
 (defn body-json-handler [request]
@@ -33,8 +27,7 @@
                                 (get :content-type)))
     (response/response {:result (-> request
                                     (body-json-handler)
-                                    (as-> body-map
-                                          (s/validate request-schema (get body-map :body)))
+                                    (body-map)
                                     (get-values)
                                     (as-> values
                                           (reduce + values))
